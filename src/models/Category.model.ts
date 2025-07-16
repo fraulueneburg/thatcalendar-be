@@ -1,8 +1,17 @@
-const { Schema, model } = require('mongoose')
+import { Schema, model, Document, Types, Model } from 'mongoose'
 
-const CategorySchema = new Schema(
+interface ICategory extends Document {
+	user: Types.ObjectId
+	parent?: Types.ObjectId | null
+	title: string
+	description?: string
+	color?: string
+	bgColor?: string
+}
+
+const CategorySchema = new Schema<ICategory>(
 	{
-		user: { type: Schema.Types.ObjectId, ref: 'User' },
+		user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 		parent: { type: Schema.Types.ObjectId, ref: 'Category', default: null },
 		title: { type: String, trim: true, required: true },
 		description: { type: String, trim: true },
@@ -22,5 +31,5 @@ CategorySchema.virtual('children', {
 	foreignField: 'parent',
 })
 
-const Category = model('Category', CategorySchema)
-module.exports = Category
+const Category: Model<ICategory> = model<ICategory>('Category', CategorySchema)
+export default Category
